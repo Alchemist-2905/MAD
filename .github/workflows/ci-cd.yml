@@ -1,0 +1,64 @@
+name: HabitAI CI-CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: |
+          backend/package-lock.json
+          frontend/package-lock.json
+      continue-on-error: true # Allow proceeding if package-lock is missing
+
+    # Backend verification
+    - name: Install Backend Dependencies
+      run: |
+        cd backend
+        npm install
+
+    - name: Test Backend Connection
+      run: |
+        cd backend
+        node -e "const sq = require('./config/database'); console.log('Sequelize configuration verified.');"
+
+    # Frontend verification
+    - name: Install Frontend Dependencies
+      run: |
+        cd frontend
+        npm install
+
+    - name: Verify Frontend Compilation
+      run: |
+        cd frontend
+        npm run build
+
+    # Docker Container Build Verification
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Verify Backend Container Build
+      uses: docker/build-push-action@v5
+      with:
+        context: ./backend
+        push: false
+
+    - name: Verify Frontend Container Build
+      uses: docker/build-push-action@v5
+      with:
+        context: ./frontend
+        push: false
+        file: ./frontend/Dockerfile

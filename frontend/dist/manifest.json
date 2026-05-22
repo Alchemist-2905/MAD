@@ -1,0 +1,17 @@
+{
+  "short_name": "HabitAI",
+  "name": "HabitAI: Smart Habit Tracker",
+  "description": "AI-Powered Smart Habit & Behavioral Tracking Web App",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#12121e",
+  "theme_color": "#4f46e5",
+  "display": "standalone",
+  "orientation": "portrait"
+}
